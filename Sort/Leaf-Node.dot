@@ -1,0 +1,17 @@
+digraph {
+    node [shape=record];
+	rankdir=LR
+	
+	subgraph cluster0{
+
+	    node0 [label=" Infimum "]
+		node1  [label="Key:0&#92;nValue:A"]
+		node2  [label="Key:1&#92;nValue:B"]
+		node3  [label="..."]
+		node4  [label="Supremum"]
+		
+		node0 -> node1 -> node2 -> node3 -> node4
+    }	 
+
+    
+}

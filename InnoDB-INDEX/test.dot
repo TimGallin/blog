@@ -1,0 +1,28 @@
+digraph structs {
+    node [shape=record];
+	rank=min;
+	sep =100;
+
+	subgraph cluster0{
+	width=300;
+	style=dashed;
+	shape=Mrecord
+	struct1[label="{Page 0(FSP_HDR)| {<p00> XDES0|<p01>XDES1|XDES2|XDES3|...|XDES255}}"];	
+	struct2[label="{Page 16384(XDES)| {<p10> XDES0|<p11>XDES1|XDES2|XDES3|...|XDES255}}"];	
+	}
+	
+	subgraph cluster1{
+	sep =100;
+	width=300;
+	style=dashed;
+	label="Space (A.ibd)";
+	struct3[label="{<Ext00>Extent0 (64 pages)|{page0|page1|...|page63}} |<Ext01>Extent1&#92;n(64pages)|...|<Ext10>Extent64 &#92;n page&#62;=16384 (64pages)|<Ext11>Extent65&#92;n(64pages)|..." ];
+	}
+	
+	
+	struct1:p00 -> struct3:Ext00;
+	struct1:p01 -> struct3:Ext01;
+	
+	struct2:p10 -> struct3:Ext10;
+	struct2:p11 -> struct3:Ext11;
+}
