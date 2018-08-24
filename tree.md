@@ -18,7 +18,7 @@
 
 ##完全二叉树（Complete Binary Tree）##
 >除了最后一级的节点外，所有的节点都是填充满的状态，且所有的最后一级所有的节点都尽量的靠像左边
-![](https://i.imgur.com/Rq6qX4O.jpg)
+![](https://i.imgur.com/xLJ4H66.png)
 
 **堆排序**
 堆是一个可以近似看做完全二叉树的数组。

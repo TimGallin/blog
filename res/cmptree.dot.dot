@@ -1,0 +1,15 @@
+digraph cmptree {
+	graph [bb="0,0,36,108"];
+	node [label="\N",
+		shape=circle
+	];
+	node1	 [height=0.5,
+		label=1,
+		pos="18,90",
+		width=0.5];
+	node2	 [height=0.5,
+		label=2,
+		pos="18,18",
+		width=0.5];
+	node1 -> node2	 [pos="e,18,36.104 18,71.697 18,63.983 18,54.712 18,46.112"];
+}
