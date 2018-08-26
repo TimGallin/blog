@@ -36,3 +36,9 @@ Innodb B+TREE的操作：
 2、	INSERTION 
 **Innodb对于Insertion的优化：**
 按照标准的B+树的插入步骤，当数据是有序插入时，将造成大量页面称为半满状态，造成<a href="https://stackoverflow.com/questions/48364549/how-does-the-leaf-node-split-in-the-physical-space-in-innodb">空间浪费</a>。Innodb对于有序插入在子节点已满时只会在父节点下重新分配一个空白节点并将数据插入。
+
+
+**Secondary indexes**
+>二级索引
+
+innodb除了主键以外的索引称为二级索引。当前二级索引与主键有重叠的字段，将删除主键中的对应字段。例如PKV=KEY(a,b,c),S-PKV=KEY(a,d),则实际主键将为KEY(b,c)。二级索引中的叶子页面和非叶子页面中都将包含其记录对应的主键值，因为二级索引没有非空和唯一性的限制，需要使用主键以确保唯一性，叶子节点中只保存主键值，避免了数据行的重复存储。因此使用二级索引做查询是实际上将做两次查询，第一次通过二级索引得到主键值，再通过主键索引得到数据行。
