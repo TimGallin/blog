@@ -48,3 +48,11 @@ struct pollfd{
 ```
 
 **poll**底层与select的实现相差无几，几乎完成了和select一样的工作，不同在于poll摈弃了fdset，采用了pollfd的结构，系统内部不会对该结构作重复拷贝
+
+##EPOLL##
+
+```
+int epoll_create(int size);
+int epoll_wait(int epfd, struct epoll_event *events, int maxevents, int timeout);
+int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
+```
