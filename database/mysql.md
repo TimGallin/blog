@@ -20,6 +20,52 @@ MYSQL默认采用自动提交，即每一个查询默认都作为事务进行。
 4. **SERILIZABLE**
    最高的隔离等级，它强制事务串行执行，在每一行数据上加锁。
 
+##READ PHENOMENA##
+**Dirty READ:**
+A dirty read occurs when a transaction is allowed to read data from a row that has been modified by another running transaction and not yet committed.
+```
+//Query 1(suppose to read 20)
+SELECT age FROM usres WHERE id=1;
+
+//Q2
+UPDATE usres SET age=21 WHERE id=1;
+
+//Q1 return. will read 21
+
+//Q2 ROLLBACK 
+
+//In this case no row exists that has an id of 1 and age of 21
+```
+
+**Non-Repeatable READS**
+A non-repeatable read occurs,when during the course of a transaction,a row is retrieved twice and the values within the row differ between reads
+```
+//Q1 (will read 20)
+SELECT age FROM usres WHERE id=1;
+
+//Q2
+UPDATE  SET age=21 WHERE id=1;
+COMMIT;
+
+//Q1 will read 21.In this transaction,Q1 respectively gets two different results of 20 and 21 
+SELECT age FROM usres WHERE id=1;   
+COMMIT;
+
+**Phantom READ**
+A phantom read occurs when,in a course of transaction,new rows are inserted or removed by another transaction to the records being read.
+```
+//Q1 
+SELECT * FROM users WHERE age BETWEEN 10 AND 30;
+
+//Q2
+INSERT INTO users(id,name,age) VALUES ( 3, 'Bob', 27 );
+COMMIT;
+
+//Q1
+SELECT * FROM users
+WHERE age BETWEEN 10 AND 30;
+COMMIT;
+   
 **MVCC（Multi-Version Concurrency Control）**
 多版本并发控制
 为了解决在Repeatable read下幻读问题，mysql引用了MVCC的解决办法。MVCC可以视为行级锁的一个变种。以Innodb的实现为例，它在每一行后面增加了**行的创建时间和过期时间**两个隐藏字段，该字段的时间值为数据库系统的**版本号（System Version Number）**。每开始一个新事务，系统就将版本号增加1。事务开始时刻的系统版本号为作为该事务的版本号，事务中的查询操作只会查找小于或等于该事务版本的行数据，且行数据的删除版本号要么未定义要么大于当前事务版本号。这两条原则避免了事务读取到其他更新事务作了修改的数据或在本事务开始后被删除掉的数据。
