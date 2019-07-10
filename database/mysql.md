@@ -83,3 +83,17 @@ COMMIT;
 - 简单的通常更好。 整型优于字符
 - 尽量避免NULL。  NULL不利于查询优化
 
+##Data Access 数据访问类型##
+###全表扫描 Full Table Scan###
+又称为顺序扫描，由于其涉及到大量的I/O操作，通常是最慢的一种数据访问类型	。但这并不是绝对的，相对于索引扫描，通常还取决于索引是聚鏃索引（Cluster）还是非聚鏃索引（non-Cluster）以及扫描结果所涉及到行占总数的比例(https://docs.microsoft.com/en-us/previous-versions/sql/legacy/aa224773(v=sql.80)) 
+通常在没有索引的情况下一个不带WHERE限制的查询会触发Full-Table-Scan\
+
+###索引扫描 Index Scan###
+通过索引树执行查询，通常在一个索引字段上执行范围查询时将触发Index-Scan
+```
+SELECT * FROM t_film WHERE id BETWEEN 10 AND 100;
+```
+
+###索引查询 Index Seek###
+
+
