@@ -22,3 +22,7 @@ A change of rules that creates blocks recognized as valid by the old software,it
 
 ##Transaction##
 
+
+
+The most majoy fucntion of blockchain:
+1.Saving data,using blockchain as a time-line database,based on 
