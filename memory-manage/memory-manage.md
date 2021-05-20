@@ -37,6 +37,37 @@
 
 
 ###JAVA内存分布
+>Kernel Space是系统级别的内存划分，这里仅讨论JVM MemoryLayout仅涉及User Space
+
+**Run-Time Data Areas** 
+JVM定义了许多不同种类的运行时数据区域，有些是在JVM启动过程就创建，推出是才销毁，有的则是基于线程独立的地址空间。线程地址空间在线程创建时分配，在线程退出时销毁
+
+>**Heap**
+堆空间，线程共享，HEAP在JVM启动时分配，通常由GC进行管理
+
+>**Method Area**
+>方法区，该区逻辑上属于HEAP，与C程序的TEXT段类似，包含了run-time constant pool(运行时常量池),code for methods and constructors(函数以及构造器代码)
+
+>**Stack**
+栈空间，独立于线程分配，栈内以Frame(帧)位单位保存数据，每当由Method调用时会在当前线程的Stack上创建一个新的栈帧，每个栈帧包含了如下信息
+Local Variables(临时变量),
+Operand Stack(操作栈，LIFO栈结构，主要用于保存加载函数参数)，
+dynamic linking(每个栈帧都包含一个指向run-time constant pool的引用，主要用于将函数调用时的函数symbolic名称转换位具体的方法名)
+Normal Method Invocation Completion，当一个函数方法正常调用退出时用到
+Abrupt Method Invocation Completion，当一个函数方法异常退出时用到
+当方法调用结束时，栈顶的栈帧被清楚
+
+>**The pc Register**
+PC寄存器，每个线程都有一个pc Register用于保存当前执行的方法中的JVM命令地址(当执行的是native方法时，pd register是undefined状态)
+
+>**Native Method Stacks**
+用于JVM在实现时支持传统的C Method调用，这不是一个必需的特性
+
+
+
+
+
+
 
 ###二者对比
 
