@@ -63,7 +63,7 @@ PC寄存器，每个线程都有一个pc Register用于保存当前执行的方�
 
 
 ### JVM与C Program ###
-从内存分布的角度看，Java和C的区别不大，Java的Method Area与C的TEXT段类似，二者对于HEAP和Stack的定义也一样。关于static变量部分，JDK8以前，静态变量保存再PermGen(Permenant Generation)部分，JDK8开始，PermGen被取消，原PermGen中保存的class meta-data将保存在NativeMemory中，而将static和interned string部分直接保存在HEAP中。
+从内存分布的角度看，Java和C的区别不大，Java的Method Area与C的TEXT段类似，二者对于HEAP和Stack的定义也一样。关于static变量部分，JDK8以前，静态变量保存再PermGen(Permenant Generation)部分，JDK8开始，PermGen被取消，原PermGen中保存的class meta-data将保存在NativeMemory中，而将static和interned string部分直接保存在HEAP中。二者最主要的区别在于对HEAP的管理，由于C/C++提供对于内存的直接操作函数以及指针，这使的代码编写者必须自行对内存进行申请和释放，同时尽量避免同一时间大量小内存的申请以免造成大量的内存碎片，而JVM则通过内置的GC对HEAP空间进行周期性的清理。
 
 ### 参考 ###
 https://docs.oracle.com/javase/specs/jvms/se16/html/jvms-2.html#jvms-2.5.4
