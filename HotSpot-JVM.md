@@ -71,3 +71,17 @@ G1是使用最广泛的回收器，G1被设计用于适配从中到大型数据�
 
 4.The Z Garbage Collector(ZGC)
 低延迟可扩展的GC，ZGC同步处理所有耗时低效的工作，但却不需要暂停运行状态的应用线程。ZGC最大的pause time可以控制在毫秒级别，但需要损失一些吞吐量。ZGC适用于那些要求低延迟且用于GC的时间与HEAP大小无关的场景，ZGC支持8MB到16TB的HEAP大小。-XX:+UseZGC 可以显示指定
+
+**G1 Collector**
+鉴于G1是当前应用最广泛的回收器，有必要单独对G1和普通的(sc,pc)回收器不同之处进行说明。首先，G1同样也是基于Generation的回收器，但是在内存分布上却有不同的表现。serial&parallel collector中，eden，survivor，od都是连续的虚拟内存空间，而在G1中却呈现出网络状的分布。G1将内存区域切分成大小一致的虚拟内存空间，这些内存区域也是执行内存分配和回收的最小单位。
+G1的内存回收循环顺序可以分为两个大的阶段：
+Young-Only Phase
+1.执行数次Normal young collections（即eden和survivor的处理，和sc&pc一致），直到old genertaion中的内存使用量达到阈值，即程序启动时设置的堆利用率阈值(Initiating Heap Occupancy threshold)
+2.启动Concurrent marking process，该线程将在接下来执行的space-reclaimation之前标记当前在old generation中所有依然可用的活跃对象。在marking process没彻底停止之前，依然有可能发生Normal young collection，marking process停止时将会执行两次stop-the-world用于完成remark和cleanup
+3.Remark remark将会结束了marking process，Remark执行全局引用以及class卸载。回收那些完全空闲的内存区域以及内部数据结构(internel data structure)，在Remark和CleanUp之间，G1将同时进行对所选的old gen中可回收对象的信息计算，这部分计算将在CleanUp中截至。
+4.CleanUp 将决定是否真正执行space-reclaimation，入职确认执行space-reclaimation，young-only phase将会在一次Prepare Mixed young collection(对于mix young collection的准备工作)后完成
+
+Space-Reclaimation
+包括多个Mixed collections，除了young-generation外，也会清除old generation中的对象。直到G1认为清除og中更多的对象不会释放足够多的空间时，space-reclaimation结束。之后将会重启young-only，如果在过程中出现OOM问题，G1也会和其他回收器一样出发FullGC
+
+
