@@ -56,3 +56,18 @@ JVM中内存大致经过以下步骤
 4. 当两个ss之间复制的次数达到一个阈值后（可以通过MaxTenuringThreshold配置）或ss的空间不足时，将触发aging，ss中的对象将被移动到Old Generation中
 5. 在经过一定次数的aging后，og中的内存不足，此时将触发major collection，JVM将会对整个heap进行全局的回收
 
+**Collectors**
+>可用的回收器
+
+1.Serial Collector(串行回收器)
+Serial collector使用单线程执行内存回收，由于没有线程间通讯，因此serial collector相对来说效率比较高。通常来说，由于单处理器的机器无法从多线程中获得优化，因此serial collector在单处理器非常适用。-XX:+UseSerialGC参数可以显示指定使用serial collector
+
+2.Paralle Collector(并行回收器)
+Parallel collector也被称为throughout collector(吞吐量回收器)，他和serial最主要的区别在于他使用了多线程来加速内存回收处理，parallel collector更适用于中到大型数据规模的系统，且运行在多核多线程的系统环境中。-XX:+UseParallelGC参数可以显示指定使用parallel collector
+Parallel compaction是parallel collector一种可选的机制，指定开启后将在majors collection中使用多线程进行加速处理，默认这一开关是开启的
+
+3.Garbage-First(G1) Garbage Collector(G1回收器)
+G1是使用最广泛的回收器，G1被设计用于适配从中到大型数据系统在所有单处理器到多处理器系统上的内存回收。G1提供高概率实现Pause-Time(暂停时间)的能力，大多数机器上，G1都是默认的collector，用-XX:+UseG1GC可以显示指定
+
+4.The Z Garbage Collector(ZGC)
+低延迟可扩展的GC，ZGC同步处理所有耗时低效的工作，但却不需要暂停运行状态的应用线程。ZGC最大的pause time可以控制在毫秒级别，但需要损失一些吞吐量。ZGC适用于那些要求低延迟且用于GC的时间与HEAP大小无关的场景，ZGC支持8MB到16TB的HEAP大小。-XX:+UseZGC 可以显示指定
