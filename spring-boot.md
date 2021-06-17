@@ -8,7 +8,7 @@
 3. 刷新application context，加载所有单例bean
 4. 触发任何CommandLineRuner标识的Bean
 
-**构建SpringApplication
+**构建SpringApplication**
 >SpringApplication(ResourceLoader resourceLoader, Class<?>... primarySources)
 
  
