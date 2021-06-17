@@ -1,7 +1,7 @@
 ## Spring Boot Main ##
 
 
-###SpringApplication
+### SpringApplication
 通常一个springboot应用，是从springapplication开始，默认情况下， springapplication将会执行以下步骤以引导启动一个springboot应用程序
 1. 基于classpath，创建一个合适的ApplicationContext
 2. 注册一个CommandLinePropertySource用于以SpringProperty的方式暴露命令行参数
@@ -13,7 +13,7 @@
 
  
 
-**引导初始化
+**引导初始化**
 >public ConfigurableApplicationContext run(String... args)的执行流程,SpringApplication.run方法将负责初始化并启动一个应用
 
 1.启动计时器
