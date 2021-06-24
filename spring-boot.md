@@ -23,7 +23,7 @@
 ```
 springframework/util中的一个计时器，通过start/stop对一段流程的执行时间进行计时，可以同时对多个任务进行计时，并内置了一些方便的函数对结果进行输出或打印，这里StopWatch主要用于对SpringBoot的引导启动过程进行计时
 
-2.
+2.创建BootstrpContext
 ```
 		DefaultBootstrapContext bootstrapContext = createBootstrapContext();
 		ConfigurableApplicationContext context = null;
@@ -31,3 +31,7 @@ springframework/util中的一个计时器，通过start/stop对一段流程的�
 		SpringApplicationRunListeners listeners = getRunListeners(args);
 		listeners.starting(bootstrapContext, this.mainApplicationClass);
 ```
+创建一个DefaultBootstrapContext，该context是一个简单的上下文用于启动过程，直至ApplicationContext准备就绪。该上下文维护生效期内的对象注册，创建和获取。DefaultBootstrapContext实现了BootstrapRegistry和BootstrapContext接口。
+BootstrapContext主要提供对一些需要消耗大量资源创建的单例或者需要在Application Context之前共享对象提供lazy access(延迟初始化)。
+BootstrapRegistry提供工厂方法对实例进行创建
+
