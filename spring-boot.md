@@ -10,7 +10,13 @@
 
 **构建SpringApplication**
 >SpringApplication(ResourceLoader resourceLoader, Class<?>... primarySources)
+1. 创建一个SpringApplication对象，初始化该对象得resourceLoader。spring application context将从primarySources加载beans信息，通常推荐用一个带有@Configuration注解得class来启动项目。
 
+2. this.webApplicationType = WebApplicationType.deduceFromClasspath();
+设置webapp类型，deduceFromClasspath会根据当前项目中是否加载了特定得class来判断webapp类型是REACTIVE，SERVERLET或者是NONE
+
+3. this.bootstrapRegistryInitializers = getBootstrapRegistryInitializersFromSpringFactories();
+从SpringFactoryies中获取BootstrapRegistryInitializers。
  
 
 **引导初始化**
