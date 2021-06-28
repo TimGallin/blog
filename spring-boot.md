@@ -9,6 +9,18 @@
 4. 触发任何CommandLineRuner标识的Bean
 
 **构建SpringApplication**
+```
+	public SpringApplication(ResourceLoader resourceLoader, Class<?>... primarySources) {
+		this.resourceLoader = resourceLoader;
+		Assert.notNull(primarySources, "PrimarySources must not be null");
+		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
+		this.webApplicationType = WebApplicationType.deduceFromClasspath();
+		this.bootstrapRegistryInitializers = getBootstrapRegistryInitializersFromSpringFactories();
+		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
+		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
+		this.mainApplicationClass = deduceMainApplicationClass();
+	}
+```
 >SpringApplication(ResourceLoader resourceLoader, Class<?>... primarySources)
 1. 创建一个SpringApplication对象，初始化该对象得resourceLoader。spring application context将从primarySources加载beans信息，通常推荐用一个带有@Configuration注解得class来启动项目。
 
@@ -17,6 +29,22 @@
 
 3. this.bootstrapRegistryInitializers = getBootstrapRegistryInitializersFromSpringFactories();
 从SpringFactoryies中获取BootstrapRegistryInitializers。
+```
+	private List<BootstrapRegistryInitializer> getBootstrapRegistryInitializersFromSpringFactories() {
+		ArrayList<BootstrapRegistryInitializer> initializers = new ArrayList<>();
+		getSpringFactoriesInstances(Bootstrapper.class).stream()
+				.map((bootstrapper) -> ((BootstrapRegistryInitializer) bootstrapper::initialize))
+				.forEach(initializers::add);
+		initializers.addAll(getSpringFactoriesInstances(BootstrapRegistryInitializer.class));
+		return initializers;
+	}
+```
+getSpringFactoriesInstances中,Bootstrapper.class作为入参，通过createSpringFactoriesInstances创建SpringFactory实例。默认会从classloader对应的FACTORIES_RESOURCE_LOCATION(META-INF/spring.factories)加载
+
+4. 同创建Bootstrapper.class类似，创建ApplicationContextInitializer.class和ApplicationListener.class对应的Factory实例
+
+5. deduceMainApplicationClass()推导一个mainappclass,这一步骤通过stacktrace中的main方法查询出对应的main类
+
  
 
 **引导初始化**
