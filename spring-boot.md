@@ -31,11 +31,11 @@ springframework/util中的一个计时器，通过start/stop对一段流程的�
 
 2.创建BootstrpContext
 ```
-		DefaultBootstrapContext bootstrapContext = createBootstrapContext();
-		ConfigurableApplicationContext context = null;
-		configureHeadlessProperty();
-		SpringApplicationRunListeners listeners = getRunListeners(args);
-		listeners.starting(bootstrapContext, this.mainApplicationClass);
+    DefaultBootstrapContext bootstrapContext = createBootstrapContext();
+    ConfigurableApplicationContext context = null;
+    configureHeadlessProperty();
+    SpringApplicationRunListeners listeners = getRunListeners(args); 
+    listeners.starting(bootstrapContext, this.mainApplicationClass);
 ```
 创建一个DefaultBootstrapContext，该context是一个简单的上下文用于启动过程，直至ApplicationContext准备就绪。该上下文维护生效期内的对象注册，创建和获取。DefaultBootstrapContext实现了BootstrapRegistry和BootstrapContext接口。
 BootstrapContext主要提供对一些需要消耗大量资源创建的单例或者需要在Application Context之前共享对象提供lazy access(延迟初始化)。
