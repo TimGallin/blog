@@ -19,8 +19,28 @@
   因为ServiceMesh并不是一个明确的标准，只是一种架构方式，因此由于厂商不同可能实现方式都会有一些差异，因此这里以Istio为例，列举一些常见的和ServiceMesh相关的特性和其大致原理。
 
 ### 关于Istio
+  Istio是一个ServiceMesh框架，通过‘Sidecar’的模式，对服务进行代理，从而使服务具备相关的功能特性。主要包括以下几个功能特性：
+  - 服务与服务之间的安全认证，包括TLS加密，身份认证和授权
+  - 7层（HTTP，gRPC,WebSocket）或4层(TCP)的负载均衡
+  - 对于服务间流量的细粒度控制，例如丰富的路由规则，重试机制，故障注入(Fault Injection)
+  - 插件式的控制策略层和可配置的API用于访问控制，限流等
+  - 服务可观测性，自带指标，日志采集以及整个集群的进出口流量监控
 
-### Envoy代理
+[Istio架构图]
+
+### Data plane: Envoy Proxy
+  Envoy是一种服务间的通讯代理，是Istio data plane中唯一控制数据流量的组件。实际上Envoy本身就已经提供了许多内建的功能，例如动态的服务发现，负载均衡，TLS，熔断，健康检查，丰富的指标数据等等特性，而Istio主要通过控制中心，将更高抽象层次的配置信息，翻译成Envoy格式的配置信息，通过Envoy特定的协议更新到集群中相应的Envoy代理中。
+  Envoy通过对端口的监听对网络流量的拦截和处理，和大多数代理一样，Envoy也使用了non-blocking的线程机制，但和我们常见的一个accpet线程多个worker的模式不同，Envoy使用了多个accept线程，默认和硬件线程数相等，来监听所有已配置的端口情况，当有请求进入时，由操作系统来决定应该由哪个worker thread接收，而之后被接收链接的处理将一直在这个worker线程中直至连接终止。这样一来，Envoy的事件处理接近于单线程模式，易于水平扩展。
+  **Envoy的线程模型**
+
+  []
+  - Main Thread: 主线程，负责提供控制接口，运行时更新配置，协调worker线程等
+  - Worker ：工作线程，每个工作线程都负责监听所有可用的listener配置，并且负责每一次连接的完整生命周期
+  - File Flush ： 负责Envoy的相关文件操作，避免由于文件写入造成的线程阻塞
+
+  **Worker的主要构成部分**
+  [Worker main parts]
+  Worker内部主要分为**Listener**和**Cluster**两部分，分别用于处理下游(downstream)和上游(updtream)方向流量。例如当服务A的请求通过Envoy转向服务B时，此时A发出的数据对于Envoy来说就是下游数据，而目标服务B则是上游服务。
 
 ### 流量控制 Traffic Management
  
@@ -36,3 +56,4 @@
 [Linkerd, What is ServiceMesh](https://linkerd.io/what-is-a-service-mesh/)
 [The History of Kubernetes on a Timeline](https://blog.risingstack.com/the-history-of-kubernetes/)
 [Concepts of Istio](https://istio.io/latest/docs/concepts/)
+[Envoy threading model](https://blog.envoyproxy.io/envoy-threading-model-a8d44b922310)
