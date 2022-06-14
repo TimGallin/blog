@@ -18,7 +18,7 @@
 ## 一些常见的ServiceMesh特性
   因为ServiceMesh并不是一个明确的标准，只是一种架构方式，因此由于厂商不同可能实现方式都会有一些差异，因此这里以Istio为例，列举一些常见的和ServiceMesh相关的特性和其大致原理。
 
-### 关于Istio
+**关于Istio**
   Istio是一个ServiceMesh框架，通过‘Sidecar’的模式，对服务进行代理，从而使服务具备相关的功能特性。主要包括以下几个功能特性：
   - 服务与服务之间的安全认证，包括TLS加密，身份认证和授权
   - 7层（HTTP，gRPC,WebSocket）或4层(TCP)的负载均衡
@@ -35,12 +35,24 @@
 
   []
   - Main Thread: 主线程，负责提供控制接口，运行时更新配置，协调worker线程等
-  - Worker ：工作线程，每个工作线程都负责监听所有可用的listener配置，并且负责每一次连接的完整生命周期
-  - File Flush ： 负责Envoy的相关文件操作，避免由于文件写入造成的线程阻塞
+  - Worker: 工作线程，每个工作线程都负责监听所有可用的listener配置，并且负责每一次连接的完整生命周期
+  - File Flush: 负责Envoy的相关文件操作，避免由于文件写入造成的线程阻塞
 
   **Worker的主要构成部分**
   [Worker main parts]
-  Worker内部主要分为**Listener**和**Cluster**两部分，分别用于处理下游(downstream)和上游(updtream)方向流量。例如当服务A的请求通过Envoy转向服务B时，此时A发出的数据对于Envoy来说就是下游数据，而目标服务B则是上游服务。
+  Worker内部主要分为**Listener**和**Cluster**两部分，分别用于处理下游(downstream)和上游(upstream)方向流量。例如当服务A的请求通过Envoy转向服务B时，此时A发出的数据对于Envoy来说就是下游数据，
+  而目标服务B则是上游服务。当Envoy接收到来自下游数据时，接收链接的Worker将会根据一些匹配规则创建对应的‘过滤链’(Filter Chain)，过滤链由多个Filter组成，例如TLS Filter，RateLimit Filter，RBAC Network Filter以及 HTTP connection manager等等，每一种Filter都会负责特定的事务，需要指出的是，鉴于HTTP在如今的服务架构中的重要地位，HTTP connection manager是Envoy中最核心的Filter之一，他负责将链接中的原始信息转换成Http层面的数据结构，纪录相关日志，生成Trace信息，路由，统计等等核心功能。
+  
+  **Sidecar**
+  Sidecar是一种部署模式，Istio中所有的Envoy代理都采用这种模式和目标服务一起部署。Sidecae模式将组建部署在一个单独的进程或者容器中并对特性功能进行封装，从而达到对目标服务的免侵入性与隔离性。Sidecar本意是指老式边三轮摩托车旁边的那个小边斗，用来形容这种部署模式再合适不过了。Sidecar部署的组件和目标服务通常存在紧密的关联关系。
+
+### Istio主要特性概念
+  Envoy作为data plane的核心组件，已经实现了大部分功能，而Istiod则作为control plane，主要由4个部分组成
+  - Pilot 实现服务发现
+  - Galley 提供配置相关功能
+  - Citadel 证书管理
+  - Mixer 支持扩展 
+  Istio的'd'指的是daemon，**Good teams look back upon their choices and, with the benefit of hindsight, revisit them**，Istio在官方blog中对Istiod的设计思想做了介绍并列举了设计Istiod的原因。
 
 ### 流量控制 Traffic Management
  
@@ -57,3 +69,5 @@
 [The History of Kubernetes on a Timeline](https://blog.risingstack.com/the-history-of-kubernetes/)
 [Concepts of Istio](https://istio.io/latest/docs/concepts/)
 [Envoy threading model](https://blog.envoyproxy.io/envoy-threading-model-a8d44b922310)
+[Sidecar pattern](https://docs.microsoft.com/en-us/azure/architecture/patterns/sidecar)
+[Introducing istiod: simplifying the control plane](https://istio.io/latest/blog/2020/istiod/)
