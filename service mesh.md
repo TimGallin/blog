@@ -1,4 +1,4 @@
-# Service Mesh
+# Service Mesh和Istio基础概念
 
 ## 什么是Service Mesh
   Service Mesh是一种软件架构，专指用于搭建基础服务中服务到服务之间通讯的一种架构模式，通过代理的方式，拦截服务之间的流量信息，进行加工处理，从而达到管理服务之间交互的目的。这里服务间的通讯包括了负载均衡，熔断，安全，追踪，观测等等常用的服务治理功能，Service Mesh通过将这些服务治理相关的功能独立到一种专门的架构，也就是ServiceMesh，中处理，从而让原本的服务专注于业务实现。从目前的资料来看，ServiceMesh是一种软件架构的模式，与单一架构或微服务类似，他们没有统一的，明确的标准，只是提供一种架构模式，而实现方式则根据不同厂商而不同，例如Istio， Linkerd，Consul，Kuma，AWS App Mesh，Open Service Mesh等等
@@ -16,7 +16,7 @@
   因此如果我们已经在使用kubernetes，并且需要更多定制化或kubernetes不具备的服务间治理特性的时候，无疑servicemesh是一个不错的选择。这比我们给应用服务添加额外的依赖和代码来实现与业务无关的功能特性要好得多。
 
 ## 一些常见的ServiceMesh特性
-  因为ServiceMesh并不是一个明确的标准，只是一种架构方式，因此由于厂商不同可能实现方式都会有一些差异，因此这里以Istio为例，列举一些常见的和ServiceMesh相关的特性和其大致原理。
+  因为ServiceMesh并不是一个明确的标准，只是一种架构方式，因此由于厂商不同可能实现方式都会有一些差异，因此这里以Istio为例，列举一些常见的和ServiceMesh相关的特性和基本框架。
 
 **关于Istio**
   Istio是一个ServiceMesh框架，通过‘Sidecar’的模式，对服务进行代理，从而使服务具备相关的功能特性。主要包括以下几个功能特性：
@@ -46,13 +46,13 @@
   **Sidecar**
   Sidecar是一种部署模式，Istio中所有的Envoy代理都采用这种模式和目标服务一起部署。Sidecae模式将组建部署在一个单独的进程或者容器中并对特性功能进行封装，从而达到对目标服务的免侵入性与隔离性。Sidecar本意是指老式边三轮摩托车旁边的那个小边斗，用来形容这种部署模式再合适不过了。Sidecar部署的组件和目标服务通常存在紧密的关联关系。
 
-### Istio主要特性概念
-  Envoy作为data plane的核心组件，已经实现了大部分功能，而Istiod则作为control plane，主要由4个部分组成
+### Control plane: Istiod
+  Envoy作为data plane的核心组件，已经自带了很多功能特性，这让我在不禁要想还需要Istio做什么。事实上Istio最初在Google内部并不是一开始就使用了Envoy作用，而是使用Nginx，之后Istio和Envoy形成项目合作关系，Envoy本身也有许多来自Istio技术成员参与研发维护工作，所以很难说Envoy和Istio是两个完全独立的项目。Istio最初的作为control plane的版本主要由4个组件组成
   - Pilot 实现服务发现
   - Galley 提供配置相关功能
   - Citadel 证书管理
   - Mixer 支持扩展 
-  Istio的'd'指的是daemon，**Good teams look back upon their choices and, with the benefit of hindsight, revisit them**，Istio在官方blog中对Istiod的设计思想做了介绍并列举了设计Istiod的原因。
+  最初他们使用了多进程的微服务模型，之后又回归了单体架构，使用Istiod提供功能，**Good teams look back upon their choices and, with the benefit of hindsight, revisit them**，Istio在官方blog中对Istiod的设计思想做了介绍并列举了设计Istiod的原因。
 
 ### 流量控制 Traffic Management
  
